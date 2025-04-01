@@ -28,3 +28,19 @@ VALUES
 UPDATE dipendenti
 SET stipendio = 1800, nome = 'Giacomo'  
 WHERE id_dipendente IN (1,3); -- Con questa query stiamo aggiornando la riga 1 e la riga 3 modificando la colonna "nome" e "stipendio"
+
+/*
+L'istruzione CASE in SQL viene utilizzata per applicare logiche condizionali, simile a un "if-else" in altri linguaggi di programmazione.  
+Ogni condizione è definita dall'istruzione `WHEN`, che esamina una condizione.
+Se la condizione è vera, il valore specificato dopo `THEN` viene assegnato alla colonna.  
+Una volta che tutte le condizioni sono state definite, il blocco `CASE` deve essere terminato con `END`.
+*/
+
+UPDATE dipendenti
+SET stipendio = CASE 
+    WHEN id_dipendente = 2 THEN 1400
+    WHEN id_dipendente = 4 THEN 1300
+END
+WHERE id_dipendente IN (2,4);
+
+-- Utilizzare l'istruzione CASE serve solo a specificare come modificare specifiche righe, ma non significa che non dobbiamo inserire l'istruzione WHERE.
