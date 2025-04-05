@@ -1,67 +1,44 @@
 /*
-L'istruzione JOIN permette di selezionare, data una certa condizione, più colonne da più tabelle.
+L'istruzione JOIN mette in comunicazione più colonne di due tabelle basandosi su una specifica condizione.
 */
 
-CREATE TABLE IF NOT EXISTS ufficio(
-    id_ufficio INT NOT NULL AUTO_INCREMENT,
-    nome_ufficio VARCHAR(50) NOT NULL,
-    PRIMARY KEY(id_ufficio)
+CREATE TABLE IF NOT EXISTS clienti(
+    id_cliente INT NOT NULL AUTO_INCREMENT,
+    nome TEXT NOT NULL,
+    ordine_cliente INT,
+    PRIMARY KEY(id_cliente)
 );
 
-
-CREATE TABLE IF NOT EXISTS dipendenti (
-    id_dipendente INT NOT NULL AUTO_INCREMENT,
-    nome VARCHAR(20) NOT NULL,
-    cognome VARCHAR(20) NOT NULL,
-    telefono VARCHAR(10) UNIQUE DEFAULT 'no-numero-telefono',
-    stipendio DECIMAL(6,2) NOT NULL,
-    data_assunzione DATE NOT NULL,
-    id_ufficio INT,
-    PRIMARY KEY(id_dipendente),
-    FOREIGN KEY(id_ufficio) REFERENCES ufficio(id_ufficio) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS ordini(
+    ordine_cibo TEXT NOT NULL,
+    id_ordine INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id_ordine)
 );
 
+INSERT INTO clienti(nome, ordine_cliente)
+VALUES 
+("Marco", 1), ("Giovanni", 2), ("Claudio", 1);
 
-INSERT INTO dipendenti (nome, cognome, telefono, stipendio, data_assunzione) 
-VALUES
-('Marco', 'Rossi', '3456789012', 1500, '2022-03-15', 4),
-('Giulia', 'Bianchi', '3291234567', 1800, '2021-07-01', 3),
-('Luca', 'Verdi', '3899876543', 1600, '2023-01-10', 1),
-('Anna', 'Ferrari', '3771122334', 1500, '2019-09-20', 3),
-('Davide', 'Moretti', '3205566778', 1700, '2020-05-25', 2);
-
-
-INSERT INTO ufficio (nome_ufficio)
-VALUES
-('Amministrazione'),
-('Servizio Civile'),
-('Call Center'),
-('Supporto Clienti');
+INSERT INTO ordini(ordine_cibo)
+VALUES 
+("Pizza"), ("Pasta"), ("Insalata");
 
 /*
-INNER JOIN è un tipo di unione tra tabelle che permette di combinare i dati  
-solo quando esiste una corrispondenza tra le colonne specificate.  
-
-Passaggi:
-1. Si inseriscono tutte le colonne da entrambe le tabelle che si desidera inserire con SELECT.  
-2. Si sceglie una tabella principale con l'istruzione FROM.  
-3. Si utilizza INNER JOIN per unire una seconda tabella.  
-4. Si definisce la condizione di unione con ON, specificando quali colonne devono combaciare.  
-
-Il risultato mostrerà solo le righe in cui esiste una corrispondenza tra entrambe le tabelle. 
+L'istruzione INNER JOIN è un tipo di unione fra due tabelle che ragiona in modo tale che vengono mostrati a schermo solo gli elementi
+delle colonne scelte che rispettano a pieno la condizione prestabilita.
 */
 
-SELECT dipendenti.id_dipendente, dipendenti.nome, ufficio.nome_ufficio
-FROM dipendenti
-INNER JOIN ufficio ON dipendenti.id_ufficio = ufficio.id_ufficio; -- In questo caso, collega la colonna "id_ufficio" della tabella "dipendenti" con la colonna "id_ufficio" della tabella "ufficio", unendo i dati corrispondenti.
+SELECT clienti.nome, ordini.ordine_cibo -- A schermo verranno mostrate SOLO le colonne "nome" e "ordine_cibo"
+FROM clienti -- la tabella "clienti", essendo la tabella inserita dopo il FROM, è la tabella principale.
+INNER JOIN ordini ON clienti.ordine_cliente = ordini.id_ordine;  -- Alla tabella "clienti" viene unita la tabella "ordini" e verranno mostrati a schermo solo gli elementi delle due colonne che nella stessa riga hanno lo stesso valore nella colonna "ordine_cliente" e "id_ordine".
 
 /*
-La LEFT JOIN, a differenza della INNER JOIN, prende tutti gli elementi della prima tabella inserita, quindi
-la tabella dopo il FROM e tutti gli elementi della tabella di destra, quindi quella dopo il JOIN.
-Qualora non ci fossero elementi corrispondenti nella tabella di destra, appariranno scritti dei NULL
-come elementi della tabella, segno che esistono elementi della prima tabella che non hanno corrispondenti nella seconda tabella.
+L'istruzione LEFT JOIN, invece, è un tipo di unione fra due tabelle il cui algoritmo funziona in modo tale che, indipendentemente dalla condizione imposta dopo ON,
+tutti gli elementi delle colonne della tabella principale, ossia quella inserita dopo il FROM, vengano mostrate a schermo.
+Qualora la condizione dopo ON non dovesse essere rispettata per determinati elementi di determinate colonne, verrà mostrato a schermo
+un 'NULL', segno che per una specifica riga non è stata rispettata la condizione prestabilita.
 */
 
-SELECT dipendenti.id_dipendente, dipendenti.nome, ufficio.nome_ufficio
-FROM dipendenti
-LEFT JOIN ufficio ON dipendenti.id_ufficio = ufficio.id_ufficio;
+SELECT clienti.nome, ordini.ordine_cibo
+FROM clienti -- la colonna "clienti" è quella principale, pertanto tutte le colonne selezionate dopo il SELECT appartenenti a questa tabella verranno mostrate indipendentemente dalla condizione.
+LEFT JOIN ordini ON clienti.ordine_cliente = ordini.id_ordine; -- Qualora gli elementi nella stessa riga della colonna "ordine_cliente" e "id_ordine" fossero diversi, l'elemento della colonna della tabella principale, ossia "clienti", viene mostrato comunque a schermo, ma l'elemento della colonna secondaria, ossia "ordini" sarà mostrato come 'NULL'.
